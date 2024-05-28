@@ -143,6 +143,7 @@ const dataFeedObject = {
         low: agg.l,
         close: agg.c,
         volume: agg.v,
+        test: 123,
       }));
       if (firstDataRequest) {
         lastBarsCache.set(symbolInfo.full_name, { ...bars[bars.length - 1] });

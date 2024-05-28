@@ -105,6 +105,7 @@ const connectToWebSocket = (currentSymbol, market) => {
                 low: data[0].c,
                 close: data[0].c,
                 volume: data[0].v,
+                test: 123,
               };
             } else {
               bar = {
