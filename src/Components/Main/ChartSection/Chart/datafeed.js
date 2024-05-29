@@ -1,10 +1,4 @@
-import { candleBars } from "./ChartModule.js";
-import {
-  // parseFullSymbol,
-  getBarsApiRequest,
-  // formatDate,
-  // candleBars,
-} from "./helpers.js";
+import { getBarsApiRequest } from "./helpers.js";
 
 import { subscribeOnStream, unsubscribeFromStream } from "./streaming.js";
 
@@ -150,7 +144,6 @@ const dataFeedObject = {
       }
 
       console.log(`[getBars]: returned ${bars.length} bar(s)`);
-      candleBars.unshift(...bars);
       onHistoryCallback(bars, { noData: false });
     } catch (error) {
       console.log("[getBars]: Get error", error);

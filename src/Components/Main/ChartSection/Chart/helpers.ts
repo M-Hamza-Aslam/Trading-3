@@ -34,11 +34,6 @@ export async function getBarsApiRequest(
   }
 }
 
-// Returns all parts of the symbol
-export function parseFullSymbol(fullSymbol: string) {
-  return fullSymbol.split(":")[1];
-}
-
 export function getLanguageFromURL() {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
   //   console.log("query params", window.location.search);
@@ -47,11 +42,4 @@ export function getLanguageFromURL() {
   return results === null
     ? null
     : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-export function formatDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }

@@ -152,14 +152,13 @@ const customIndicatorStudy = (PineJS) => {
 
           this._context.select_sym(0);
 
-          console.log("context: ", context);
           const o = PineJS.Std.open(this._context);
           const h = PineJS.Std.high(this._context);
           const l = PineJS.Std.low(this._context);
           const c = PineJS.Std.close(this._context);
 
           // Example condition: Change candle color to blue if close price is greater than 100
-          const myCondition = c > 62321;
+          const myCondition = c == h || c == l || c == o;
 
           // Determine the color based on the default behavior and the condition
           let barColor, wickColor, borderColor;
@@ -184,9 +183,18 @@ const customIndicatorStudy = (PineJS) => {
   ]);
 };
 
-export let candleBars = [];
+let newRangeEvent = false;
+export let LocalRangeId = null;
 
-export function initializeChart(chartContainerRef, symbol) {
+export function initializeChart(
+  chartContainerRef,
+  symbol,
+  range,
+  addRange,
+  updateRangePoints,
+  updateRangeId,
+  removeRange
+) {
   // Initialize the chart widget if it doesn't exist
   const widgetOptions = {
     //this is temporary solution for bitfinex symbols
@@ -208,7 +216,11 @@ export function initializeChart(chartContainerRef, symbol) {
       "study_dialog_fundamentaldata",
       "study_buttons",
     ],
-    enabled_features: ["study_templates"],
+    enabled_features: [
+      "study_templates",
+      "header_widget",
+      "study_dialog_fundamentaldata",
+    ],
     charts_storage_url: "https://saveload.tradingview.com",
     charts_storage_api_version: "1.1",
     client_id: "tradingview.com",
@@ -232,5 +244,57 @@ export function initializeChart(chartContainerRef, symbol) {
       true
     );
     chartDetails.Widget.chart().getStudyById(study).bringToFront();
+    if (range) {
+      const newRangeId = chartDetails.Widget.chart().createMultipointShape(
+        range.rangePoints,
+        {
+          shape: "date_and_price_range",
+        }
+      );
+      updateRangeId(range.rangeId, newRangeId);
+      LocalRangeId = newRangeId;
+    }
+    chartDetails.Widget.subscribe("drawing", (event) => {
+      console.log("drawing: ", event);
+      if (
+        event.category === "drawings" &&
+        event.value === "LineToolDateAndPriceRange"
+      ) {
+        newRangeEvent = true;
+      }
+    });
+    chartDetails.Widget.subscribe("drawing_event", (id, type) => {
+      console.log("drawing event: ", id, LocalRangeId, type);
+
+      if (type === "create" && newRangeEvent) {
+        const points = chartDetails.Widget.activeChart()
+          .getShapeById(id)
+          .getPoints();
+        //add new range and remove the previous one
+        if (LocalRangeId) {
+          chartDetails.Widget.activeChart().removeEntity(LocalRangeId);
+          removeRange(LocalRangeId);
+        }
+        const range = {
+          symbol: symbol,
+          rangeId: id,
+          rangePoints: points,
+          toleranceInput: 0,
+        };
+        addRange(range);
+        LocalRangeId = id;
+        newRangeEvent = false;
+      } else if (type === "remove" && id === LocalRangeId) {
+        console.log("removing");
+        removeRange(id);
+        LocalRangeId = null;
+      } else if (type === "points_changed" && id === LocalRangeId) {
+        const points = chartDetails.Widget.activeChart()
+          .getShapeById(id)
+          .getPoints();
+        console.log(points);
+        updateRangePoints(points, id);
+      }
+    });
   });
 }

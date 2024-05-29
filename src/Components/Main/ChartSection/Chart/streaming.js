@@ -1,15 +1,6 @@
-// import { getWebSocketURL } from "../script.js";
 import { parseFullSymbol } from "./helpers.js";
 const channelToSubscription = new Map();
 let ws;
-
-// let channelToSubscription = {
-//   subscriberUID: null,
-//   ws: null,
-//   lastBar: null,
-//   resolution: null,
-//   callback: null,
-// };
 
 function getNextBarTime(barTime, resolution) {
   // Convert the bar time to a Date object.
@@ -40,7 +31,6 @@ function getNextBarTime(barTime, resolution) {
 
   // Convert the Date object back to seconds.
   const nextBarTime = barTimeDate.getTime();
-  // console.log("nextBarTime", nextBarTime);
   return nextBarTime;
 }
 
