@@ -13,7 +13,7 @@ const ChartSection = () => {
   const status = selectedSymbol && showChart ? 2 : selectedSymbol ? 1 : 0;
 
   //hardcoded for now
-  const symbol = "X:BTCEUR";
+  const symbol = selectedSymbol;
   const range = ranges.filter((range) => range.symbol === symbol)[0];
   return (
     <>
@@ -50,7 +50,7 @@ const ChartSection = () => {
           {isShowRangeModal && (
             <RangeModal
               closeModalHandler={() => setIsShowRangeModal(false)}
-              symbol={symbol}
+              symbol={symbol as string}
             />
           )}
         </div>

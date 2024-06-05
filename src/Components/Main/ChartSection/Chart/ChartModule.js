@@ -24,7 +24,7 @@ export function initializeChart(
     symbol: symbol,
     // BEWARE: no trailing slash is expected in feed URL
     datafeed: Datafeed,
-    interval: "1",
+    interval: "1D",
     container: chartContainerRef,
     library_path: "/charting_library/",
 

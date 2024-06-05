@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { SymbolsContext, category } from "../../context/SymbolsContext";
-import { dummyCategoris } from "../../assets/DummyData";
+import { getCategoryList } from "../../helpers/requests";
+import { toast } from "react-toastify";
 
 interface Props {
   closeModalHandler: () => void;
@@ -10,8 +11,6 @@ const CategoryModal: FC<Props> = ({ closeModalHandler }) => {
   const { categories, selectedCategory, setCategories, selectCategory } =
     useContext(SymbolsContext);
   const [loading, setLoading] = useState(true);
-  // const [categories, setCategories] = useState(dummyCategoris);
-  //   const [selectCategory, setSelectCategory] = useState<string>("");
 
   const SelectCategoryHandler = async (category: category) => {
     selectCategory(category);
@@ -23,13 +22,18 @@ const CategoryModal: FC<Props> = ({ closeModalHandler }) => {
       setLoading(false);
       return;
     }
-    //get_category_list
-    const timer = setTimeout(() => {
-      setCategories(dummyCategoris);
+    const FetchCategoryList = async () => {
+      try {
+        const response = await getCategoryList();
+        setCategories(response.data);
+      } catch (err) {
+        console.log(err);
+        toast.error("Something went wrong. Please try again");
+      }
       setLoading(false);
-    }, 1000);
+    };
 
-    return () => clearTimeout(timer);
+    FetchCategoryList();
   }, []);
   return (
     <div
@@ -87,12 +91,12 @@ const CategoryModal: FC<Props> = ({ closeModalHandler }) => {
                     key={index}
                     onClick={() => SelectCategoryHandler(category)}
                     className={`${
-                      selectedCategory?.id === category.id
+                      selectedCategory === category
                         ? "border-blue-500 bg-blue-100"
                         : "hover:border-blue-500 hover:bg-blue-100  bg-transparent"
                     } w-full hover:cursor-pointer rounded-lg border-[1.5px] text-sm  py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-whiter`}
                   >
-                    {category.name}
+                    {category}
                   </div>
                 ))}
               </div>

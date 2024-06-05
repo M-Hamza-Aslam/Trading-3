@@ -3,6 +3,7 @@ import { RangeContext } from "../../../context/RangeContext";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
+import { getOccurences } from "../../../helpers/requests";
 
 interface Props {
   closeModalHandler: () => void;
@@ -52,6 +53,14 @@ const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
           values.toleranceInput as number,
           values.id as string
         );
+        const body = {
+          symbol: values.symbol,
+          start_range: new Date(values.startingTime).toISOString(),
+          end_range: new Date(values.endingTime).toISOString(),
+          tolerance: values.toleranceInput as number,
+        };
+        const response = await getOccurences(body);
+        console.log(response.data);
         toast.success("Range proceed successfully");
         closeModalHandler();
         resetForm();

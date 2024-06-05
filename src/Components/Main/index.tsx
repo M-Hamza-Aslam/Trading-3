@@ -25,14 +25,6 @@ const Main = () => {
         </div>
       )}
       {status === 2 && (
-        // <div className="flex">
-        //   <div className="w-[12%] max-w-[280px]">
-        //     <Sidebar />
-        //   </div>
-        //   <div className="flex-grow overflow-auto">
-        //     <ChartSection />
-        //   </div>
-        // </div>
         <div className="">
           <SideBar />
           <main className="sm:ms-[250px] mt-[60px] min-h-[87vh]">

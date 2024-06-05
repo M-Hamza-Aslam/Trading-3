@@ -72,11 +72,11 @@ const SideBar = () => {
                   type="button"
                   onClick={() => handleSymbolSelection(symbol)}
                   className={`${
-                    selectedSymbol?.name === symbol.name ? "text-blue-500" : ""
+                    selectedSymbol === symbol ? "text-blue-500" : ""
                   } p-2 hover:text-blue-500 w-fit`}
                   key={index}
                 >
-                  {symbol.name}
+                  {symbol}
                 </button>
               </li>
             );

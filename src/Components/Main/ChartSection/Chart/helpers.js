@@ -1,4 +1,8 @@
+import axios from "axios";
+
 const API_KEY = import.meta.env.VITE_POLYGON_API_KEY;
+const API_URL = import.meta.env.VITE_APP_API_URL;
+const HISTORICAL_SYMBOL_DATA = `${API_URL}/get_symbol_historical_data`;
 
 export async function getBarsApiRequest(coinId, type, from, to, limit) {
   try {
@@ -6,7 +10,19 @@ export async function getBarsApiRequest(coinId, type, from, to, limit) {
     const response = await fetch(apiUrl);
     return response.json();
   } catch (error) {
-    throw new Error(`CryptoCompare request error: ${error.status}`);
+    throw new Error(`request error: ${error.status}`);
+  }
+}
+
+export async function getHistoricalBars(coinId) {
+  try {
+    const response = await axios.get(
+      `${HISTORICAL_SYMBOL_DATA}?symbol=${coinId}`
+    );
+    const data = await JSON.parse(response.data);
+    return data;
+  } catch (error) {
+    throw new Error(`request error: ${error.status}`);
   }
 }
 
@@ -30,4 +46,13 @@ export function formatDate(date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+export function getTimestamp(dateString) {
+  const [datePart, timePart] = dateString.split(" ");
+  const [day, month, year] = datePart.split("/");
+  const [hours, minutes] = timePart.split(":");
+
+  const isoString = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+  return new Date(isoString).getTime();
 }

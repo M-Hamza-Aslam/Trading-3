@@ -1,13 +1,9 @@
 import { Dispatch, SetStateAction, createContext, useState } from "react";
-import { dummySymbols } from "../assets/DummyData";
+import { getSymbolList } from "../helpers/requests";
+import { toast } from "react-toastify";
 
-export interface category {
-  id: number;
-  name: string;
-}
-export interface symbolProps {
-  name: string;
-}
+export type category = string;
+export type symbolProps = string;
 interface SymbolsContextState {
   categories: category[];
   selectedCategory: category | null;
@@ -42,15 +38,18 @@ export const SymbolsProvider = ({
     null
   );
 
-  const selectCategory = (category: category) => {
+  const selectCategory = async (category: category) => {
     setSymbols([]);
     setSelectedSymbol(null);
     setSelectedCategory(category);
     localStorage.setItem("market", "crypto");
-    //get_category_symbols
-    setTimeout(() => {
-      setSymbols(dummySymbols);
-    }, 1000);
+    try {
+      const response = await getSymbolList(category);
+      setSymbols(response.data);
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong. Please try again");
+    }
   };
 
   return (

@@ -1,9 +1,7 @@
-import { getBarsApiRequest } from "./helpers.js";
-
-import { subscribeOnStream, unsubscribeFromStream } from "./streaming.js";
+import { getHistoricalBars, getTimestamp } from "./helpers.js";
 
 const configurationData = {
-  supported_resolutions: ["1"],
+  supported_resolutions: ["1D"],
   exchanges: [],
   symbols_types: [
     { name: "crypto", value: "crypto" },
@@ -92,57 +90,29 @@ const dataFeedObject = {
       currentResolution = resolution;
     }
 
-    //setting the resolution and type for the API
-    // let resln;
-    let type;
-    if (resolution === "1D" || resolution === "1W" || resolution === "1M") {
-      // resln = "1D";
-      type = "day";
-    } else if (resolution === "60" || resolution === "240") {
-      // resln = "1H";
-      type = "hour";
-    } else if (
-      resolution === "1" ||
-      resolution === "5" ||
-      resolution === "15" ||
-      resolution === "30"
-    ) {
-      // resln = "1M";
-      type = "minute";
-    }
-
-    // getting bars from the API and passing them to the chart
-
     try {
-      let data = {};
-      data = await getBarsApiRequest(
-        symbolInfo.full_name,
-        type,
-        from * 1000,
-        to * 1000,
-        2000
-      );
-      if (
-        (data.Response && data.Response === "Error") ||
-        data.resultsCount === 0
-      ) {
+      const rawData = await getHistoricalBars(symbolInfo.full_name);
+
+      // creating OHLC Objects
+      const bars = Object.keys(rawData.time).map((index) => {
+        return {
+          time: getTimestamp(rawData.time[index]),
+          open: rawData.open[index],
+          high: rawData.high[index],
+          low: rawData.low[index],
+          close: rawData.close[index],
+          volume: rawData.volume[index],
+          is_special: rawData.is_special[index],
+        };
+      });
+      if (bars.length === 0) {
         // "noData" should be set if there is no data in the requested period
         onHistoryCallback([], { noData: true });
         return;
       }
-      let bars = data.results.map((agg) => ({
-        time: agg.t,
-        open: agg.o,
-        high: agg.h,
-        low: agg.l,
-        close: agg.c,
-        volume: agg.v,
-        test: 123,
-      }));
       if (firstDataRequest) {
         lastBarsCache.set(symbolInfo.full_name, { ...bars[bars.length - 1] });
       }
-
       console.log(`[getBars]: returned ${bars.length} bar(s)`);
       onHistoryCallback(bars, { noData: false });
     } catch (error) {
@@ -150,24 +120,16 @@ const dataFeedObject = {
       onErrorCallback(error);
     }
   },
-  subscribeBars: async (
+  subscribeBars: (
     symbolInfo,
     resolution,
     onRealtimeCallback,
-    subscriberUID,
-    onResetCacheNeededCallback
+    subscriberUID
+    // onResetCacheNeededCallback
   ) => {
     console.log(
       "[subscribeBars]: Method call with subscriberUID:",
       subscriberUID
-    );
-    subscribeOnStream(
-      symbolInfo,
-      resolution,
-      onRealtimeCallback,
-      subscriberUID,
-      onResetCacheNeededCallback,
-      lastBarsCache.get(symbolInfo.full_name)
     );
   },
   unsubscribeBars: (subscriberUID) => {
@@ -175,7 +137,6 @@ const dataFeedObject = {
       "[unsubscribeBars]: Method call with subscriberUID:",
       subscriberUID
     );
-    unsubscribeFromStream(subscriberUID);
   },
 };
 
