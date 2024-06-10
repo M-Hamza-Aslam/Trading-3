@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { getOccurences } from "../../../helpers/requests";
+import { chartDetails } from "../ChartSection/Chart/ChartModule.js";
 
 interface Props {
   closeModalHandler: () => void;
@@ -62,6 +63,12 @@ const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
         const response = await getOccurences(body);
         console.log(response.data);
         toast.success("Range proceed successfully");
+        const study = await chartDetails.Widget.activeChart().createStudy(
+          "Advanced Coloring Candles",
+          false,
+          true
+        );
+        chartDetails.Widget.chart().getStudyById(study).bringToFront();
         closeModalHandler();
         resetForm();
       } catch (err) {

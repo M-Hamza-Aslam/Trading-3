@@ -1,6 +1,7 @@
 import { widget } from "../../../../charting_library";
 import { getLanguageFromURL } from "./helpers.js";
 import Datafeed from "./datafeed";
+import { customIndicatorStudy } from "./CustomIndicatorStudy.js";
 
 export let chartDetails = {
   Widget: null,
@@ -51,6 +52,7 @@ export function initializeChart(
     fullscreen: false,
     autosize: true,
     theme: "Dark",
+    custom_indicators_getter: customIndicatorStudy,
   };
 
   chartDetails.Widget = new widget(widgetOptions);
@@ -60,6 +62,12 @@ export function initializeChart(
     chartDetails.Widget.activeChart().dataReady(() => {
       console.log("Chart Data is loaded");
     });
+    // const study = await chartDetails.Widget.activeChart().createStudy(
+    //   "Advanced Coloring Candles",
+    //   false,
+    //   true
+    // );
+    // chartDetails.Widget.chart().getStudyById(study).bringToFront();
     if (range) {
       const newRangeId = chartDetails.Widget.chart().createMultipointShape(
         range.rangePoints,
@@ -69,6 +77,12 @@ export function initializeChart(
       );
       updateRangeId(range.rangeId, newRangeId);
       LocalRangeId = newRangeId;
+      const study = await chartDetails.Widget.activeChart().createStudy(
+        "Advanced Coloring Candles",
+        false,
+        true
+      );
+      chartDetails.Widget.chart().getStudyById(study).bringToFront();
     }
     chartDetails.Widget.subscribe("drawing", (event) => {
       console.log("drawing: ", event);
