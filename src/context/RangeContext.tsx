@@ -19,6 +19,8 @@ interface RangeContextState {
   updateRangeToleranceInput: (toleranceInput: number, rangeId: string) => void;
   updateRangeId: (rangeId: string, newRangeId: string) => void;
   removeRange: (rangeId: string) => void;
+  specialCandles: number[];
+  addSpecialCandle: (candle: number) => void;
 }
 
 export const RangeContext = createContext<RangeContextState>({
@@ -28,10 +30,26 @@ export const RangeContext = createContext<RangeContextState>({
   updateRangeToleranceInput: () => {},
   updateRangeId: () => {},
   removeRange: () => {},
+  specialCandles: [],
+  addSpecialCandle: () => {},
 });
+
+let addSpecialCandle;
 
 export const RangeProvider = ({ children }: { children: React.ReactNode }) => {
   const [ranges, setRanges] = useState<range[]>([]);
+  const [specialCandles, setSpecialCandles] = useState<number[]>([]);
+
+  addSpecialCandle = (candle: number) => {
+    if (specialCandles.includes(candle)) {
+      return;
+    }
+    setSpecialCandles((prevCandles) => {
+      const tempCandles = [...prevCandles];
+      tempCandles.push(candle);
+      return tempCandles;
+    });
+  };
 
   const addRange = (range: range) => {
     setRanges((prevRanges) => {
@@ -86,9 +104,15 @@ export const RangeProvider = ({ children }: { children: React.ReactNode }) => {
         updateRangeToleranceInput,
         updateRangeId,
         removeRange,
+        specialCandles,
+        addSpecialCandle,
       }}
     >
       {children}
     </RangeContext.Provider>
   );
+};
+
+export const updateSpecialCandelsExternally = (candle: number) => {
+  addSpecialCandle(candle);
 };

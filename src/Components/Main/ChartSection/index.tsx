@@ -4,10 +4,11 @@ import RangeModal from "../RangeModal/index.js";
 
 import { SymbolsContext } from "../../../context/SymbolsContext";
 import { RangeContext } from "../../../context/RangeContext";
+import SpecialCandelsList from "./SpecialCandelsList.js";
 
 const ChartSection = () => {
   const { selectedSymbol } = useContext(SymbolsContext);
-  const { ranges } = useContext(RangeContext);
+  const { ranges, specialCandles } = useContext(RangeContext);
   const [isShowRangeModal, setIsShowRangeModal] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const status = selectedSymbol && showChart ? 2 : selectedSymbol ? 1 : 0;
@@ -45,7 +46,16 @@ const ChartSection = () => {
               </button>
             )}
           </div>
-          {status === 2 && <AdvanceChart coinId={symbol} />}
+          {status === 2 && (
+            <div className="flex gap-4">
+              {specialCandles.length > 0 && (
+                <SpecialCandelsList specialCandles={specialCandles} />
+              )}
+              <div className="flex-grow">
+                <AdvanceChart coinId={symbol} />
+              </div>
+            </div>
+          )}
 
           {isShowRangeModal && (
             <RangeModal

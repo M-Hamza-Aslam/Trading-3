@@ -27,7 +27,7 @@ const Main = () => {
       {status === 2 && (
         <div className="">
           <SideBar />
-          <main className="sm:ms-[250px] mt-[60px] min-h-[87vh]">
+          <main className="sm:ms-[125px] mt-[60px] min-h-[87vh]">
             <div className="mx-auto max-w-screen-2xl">
               <ChartSection />
             </div>

@@ -1,3 +1,7 @@
+export const specialCandlesTime = [];
+
+import { updateSpecialCandelsExternally } from "../../../../context/RangeContext";
+
 export const customIndicatorStudy = (PineJS) => {
   return Promise.resolve([
     /* Advanced Coloring Candles */
@@ -143,12 +147,11 @@ export const customIndicatorStudy = (PineJS) => {
           this._input = inputCallback;
 
           this._context.select_sym(0);
-
           const o = PineJS.Std.open(this._context);
           const h = PineJS.Std.high(this._context);
           const l = PineJS.Std.low(this._context);
           const c = PineJS.Std.close(this._context);
-
+          const t = PineJS.Std.time(this._context);
           // Example condition: Change candle color to blue if close price is greater than 100
           const myCondition = c == h || c == l || c == o;
 
@@ -158,6 +161,7 @@ export const customIndicatorStudy = (PineJS) => {
             barColor = 2; // Blue color index
             wickColor = 2; // Blue color index
             borderColor = 2; // Blue color index
+            updateSpecialCandelsExternally(t);
           } else {
             // Default behavior based on price change
             barColor =
