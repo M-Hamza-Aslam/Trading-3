@@ -1,6 +1,7 @@
 export const specialCandlesTime = [];
 
-import { updateSpecialCandelsExternally } from "../../../../context/RangeContext";
+// import { updateSpecialCandelsExternally } from "../../../../context/RangeContext";
+export const specialCandlesArr = [];
 
 export const customIndicatorStudy = (PineJS) => {
   return Promise.resolve([
@@ -152,16 +153,24 @@ export const customIndicatorStudy = (PineJS) => {
           const l = PineJS.Std.low(this._context);
           const c = PineJS.Std.close(this._context);
           const t = PineJS.Std.time(this._context);
+          console.log("t: ", t, specialCandlesArr);
           // Example condition: Change candle color to blue if close price is greater than 100
-          const myCondition = c == h || c == l || c == o;
+          // const myCondition = c == h || c == l || c == o;
 
           // Determine the color based on the default behavior and the condition
           let barColor, wickColor, borderColor;
-          if (myCondition) {
+          const myCondition2 = specialCandlesArr.some(
+            (candle) =>
+              candle.open === o &&
+              candle.high === h &&
+              candle.low === l &&
+              candle.close === c
+          );
+          if (myCondition2) {
             barColor = 2; // Blue color index
             wickColor = 2; // Blue color index
             borderColor = 2; // Blue color index
-            updateSpecialCandelsExternally(t);
+            // updateSpecialCandelsExternally(t);
           } else {
             // Default behavior based on price change
             barColor =

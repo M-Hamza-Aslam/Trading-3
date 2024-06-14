@@ -95,7 +95,8 @@ const dataFeedObject = {
 
       // creating OHLC Objects
       const bars = Object.keys(rawData.time).map((index) => {
-        return {
+        // console.log("map: ", rawData.is_special);
+        const bar = {
           time: getTimestamp(rawData.time[index]),
           open: rawData.open[index],
           high: rawData.high[index],
@@ -104,6 +105,7 @@ const dataFeedObject = {
           volume: rawData.volume[index],
           is_special: rawData.is_special[index],
         };
+        return bar;
       });
       if (bars.length === 0) {
         // "noData" should be set if there is no data in the requested period

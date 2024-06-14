@@ -21,6 +21,7 @@ interface RangeContextState {
   removeRange: (rangeId: string) => void;
   specialCandles: number[];
   addSpecialCandle: (candle: number) => void;
+  setSpecialCandles: (candles: number[]) => void;
 }
 
 export const RangeContext = createContext<RangeContextState>({
@@ -32,6 +33,7 @@ export const RangeContext = createContext<RangeContextState>({
   removeRange: () => {},
   specialCandles: [],
   addSpecialCandle: () => {},
+  setSpecialCandles: () => {},
 });
 
 let addSpecialCandle;
@@ -106,6 +108,7 @@ export const RangeProvider = ({ children }: { children: React.ReactNode }) => {
         removeRange,
         specialCandles,
         addSpecialCandle,
+        setSpecialCandles,
       }}
     >
       {children}

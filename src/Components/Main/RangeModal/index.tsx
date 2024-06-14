@@ -5,6 +5,8 @@ import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { getOccurences } from "../../../helpers/requests";
 import { chartDetails } from "../ChartSection/Chart/ChartModule.js";
+import { getTimestamp } from "../../Main/ChartSection/Chart/helpers.js";
+import { specialCandlesArr } from "../ChartSection/Chart/CustomIndicatorStudy.js";
 
 interface Props {
   closeModalHandler: () => void;
@@ -16,7 +18,8 @@ const ShortValidationSchema = Yup.object({
 });
 
 const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
-  const { ranges, updateRangeToleranceInput } = useContext(RangeContext);
+  const { ranges, updateRangeToleranceInput, setSpecialCandles } =
+    useContext(RangeContext);
   const [loading, setLoading] = useState(false);
   const range = ranges.filter((r) => r.symbol === symbol)[0];
   const initialRangeValues = {
@@ -61,7 +64,28 @@ const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
           tolerance: values.toleranceInput as number,
         };
         const response = await getOccurences(body);
-        console.log(response.data);
+        const data = await JSON.parse(response.data);
+
+        // const specialCandles: Candles[] = [];
+        const specialCandlesTimestamp: number[] = [];
+        Object.keys(data.time).forEach((index) => {
+          // console.log("map: ", rawData.is_special);
+          const bar = {
+            time: getTimestamp(data.time[index]),
+            open: data.open[index],
+            high: data.high[index],
+            low: data.low[index],
+            close: data.close[index],
+            volume: data.volume[index],
+            is_special: data.is_special[index],
+          };
+
+          if (bar.is_special) {
+            specialCandlesArr.push(bar);
+            specialCandlesTimestamp.push(bar.time);
+          }
+        });
+        setSpecialCandles(specialCandlesTimestamp);
         toast.success("Range proceed successfully");
         const study = await chartDetails.Widget.activeChart().createStudy(
           "Advanced Coloring Candles",
