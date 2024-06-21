@@ -9,6 +9,7 @@ export let chartDetails = {
 
 let newRangeEvent = false;
 export let LocalRangeId = null;
+export let AdvancedColoringCandlesStudyId = null;
 
 export function initializeChart(
   chartContainerRef,
@@ -118,6 +119,7 @@ export function initializeChart(
         console.log("removing");
         removeRange(id);
         LocalRangeId = null;
+        chartDetails.Widget.activeChart().removeAllStudies();
       } else if (type === "points_changed" && id === LocalRangeId) {
         const points = chartDetails.Widget.activeChart()
           .getShapeById(id)

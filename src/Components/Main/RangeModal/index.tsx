@@ -7,6 +7,7 @@ import { getOccurences } from "../../../helpers/requests";
 import { chartDetails } from "../ChartSection/Chart/ChartModule.js";
 import { getTimestamp } from "../../Main/ChartSection/Chart/helpers.js";
 import { specialCandlesArr } from "../ChartSection/Chart/CustomIndicatorStudy.js";
+import { currentResolution } from "../../Main/ChartSection/Chart/datafeed.js";
 
 interface Props {
   closeModalHandler: () => void;
@@ -17,32 +18,43 @@ const ShortValidationSchema = Yup.object({
   toleranceInput: Yup.number().required("Required"),
 });
 
-const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
-  const { ranges, updateRangeToleranceInput, setSpecialCandles } =
+const RangeModal: FC<Props> = ({ closeModalHandler }) => {
+  const { range, updateRangeToleranceInput, setSpecialCandles } =
     useContext(RangeContext);
   const [loading, setLoading] = useState(false);
-  const range = ranges.filter((r) => r.symbol === symbol)[0];
-  const initialRangeValues = {
-    symbol: range.symbol,
-    id: range.rangeId,
-    startingPrice:
-      range.rangePoints[0].price <= range.rangePoints[1].price
-        ? range.rangePoints[0].price
-        : range.rangePoints[1].price,
-    endingPrice:
-      range.rangePoints[0].price <= range.rangePoints[1].price
-        ? range.rangePoints[1].price
-        : range.rangePoints[0].price,
-    startingTime:
-      range.rangePoints[0].time <= range.rangePoints[1].time
-        ? range.rangePoints[0].time
-        : range.rangePoints[1].time,
-    endingTime:
-      range.rangePoints[0].time <= range.rangePoints[1].time
-        ? range.rangePoints[1].time
-        : range.rangePoints[0].time,
-    toleranceInput: range.toleranceInput,
+
+  let initialRangeValues = {
+    symbol: "",
+    id: "",
+    startingPrice: 0,
+    endingPrice: 0,
+    startingTime: 0,
+    endingTime: 0,
+    toleranceInput: 0,
   };
+  if (range) {
+    initialRangeValues = {
+      symbol: range.symbol,
+      id: range.rangeId as string,
+      startingPrice:
+        range.rangePoints[0].price <= range.rangePoints[1].price
+          ? range.rangePoints[0].price
+          : range.rangePoints[1].price,
+      endingPrice:
+        range.rangePoints[0].price <= range.rangePoints[1].price
+          ? range.rangePoints[1].price
+          : range.rangePoints[0].price,
+      startingTime:
+        range.rangePoints[0].time <= range.rangePoints[1].time
+          ? range.rangePoints[0].time
+          : range.rangePoints[1].time,
+      endingTime:
+        range.rangePoints[0].time <= range.rangePoints[1].time
+          ? range.rangePoints[1].time
+          : range.rangePoints[0].time,
+      toleranceInput: range.toleranceInput as number,
+    };
+  }
 
   const formik = useFormik({
     initialValues: initialRangeValues,
@@ -53,15 +65,13 @@ const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
         //calling api
         setTimeout(() => {}, 1000);
         console.log(values);
-        updateRangeToleranceInput(
-          values.toleranceInput as number,
-          values.id as string
-        );
+        updateRangeToleranceInput(values.toleranceInput as number);
         const body = {
           symbol: values.symbol,
           start_range: new Date(values.startingTime).toISOString(),
           end_range: new Date(values.endingTime).toISOString(),
           tolerance: values.toleranceInput as number,
+          resolution: currentResolution,
         };
         const response = await getOccurences(body);
         const data = await JSON.parse(response.data);
@@ -85,6 +95,7 @@ const RangeModal: FC<Props> = ({ closeModalHandler, symbol }) => {
             specialCandlesTimestamp.push(bar.time);
           }
         });
+        specialCandlesTimestamp.sort((a, b) => b - a);
         setSpecialCandles(specialCandlesTimestamp);
         toast.success("Range proceed successfully");
         const study = await chartDetails.Widget.activeChart().createStudy(

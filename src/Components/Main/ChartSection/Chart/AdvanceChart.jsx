@@ -4,11 +4,10 @@ import { RangeContext } from "../../../../context/RangeContext";
 
 const AdvanceChart = ({ coinId }) => {
   const chartRef = React.useRef(null);
-  const { ranges, addRange, updateRangePoints, updateRangeId, removeRange } =
+  const { range, addRange, updateRangePoints, updateRangeId, removeRange } =
     useContext(RangeContext);
 
   useEffect(() => {
-    const range = ranges.filter((range) => range.symbol === coinId)[0];
     initializeChart(
       chartRef.current,
       coinId,

@@ -1,13 +1,17 @@
 import { useContext, useEffect, useRef } from "react";
 import { SymbolsContext, symbolProps } from "../../../context/SymbolsContext";
 import { SidebarContext } from "../../../context/SidebarContext";
+import { RangeContext } from "../../../context/RangeContext";
 
 const SideBar = () => {
   const { symbols, selectedSymbol, setSelectedSymbol } =
     useContext(SymbolsContext);
+  const { removeRange } = useContext(RangeContext);
   const handleSymbolSelection = (symbol: symbolProps) => {
     if (symbol === selectedSymbol) return;
     setSelectedSymbol(symbol);
+    //removing range is exist
+    removeRange();
   };
 
   const sidebar = useRef<HTMLElement>(null);

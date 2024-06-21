@@ -14,10 +14,10 @@ export async function getBarsApiRequest(coinId, type, from, to, limit) {
   }
 }
 
-export async function getHistoricalBars(coinId) {
+export async function getHistoricalBars(coinId, resolution) {
   try {
     const response = await axios.get(
-      `${HISTORICAL_SYMBOL_DATA}?symbol=${coinId}`
+      `${HISTORICAL_SYMBOL_DATA}?symbol=${coinId}&resolution=${resolution}`
     );
     const data = await JSON.parse(response.data);
     return data;

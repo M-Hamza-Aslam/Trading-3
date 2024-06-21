@@ -46,6 +46,7 @@ export const SymbolsProvider = ({
     try {
       const response = await getSymbolList(category);
       setSymbols(response.data);
+      setSelectedSymbol(response.data[0]);
     } catch (err) {
       console.log(err);
       toast.error("Something went wrong. Please try again");

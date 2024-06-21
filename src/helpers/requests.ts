@@ -12,6 +12,7 @@ interface occurencesBody {
   start_range: string;
   end_range: string;
   tolerance: number;
+  resolution: string;
 }
 
 export function getCategoryList() {
@@ -30,6 +31,6 @@ export function getOccurences(body: occurencesBody) {
   return axios.get(
     `${OCCURENCES}?symbol=${"AAPL"}&start_range=${body.start_range}&end_range=${
       body.end_range
-    }&tolerance=${body.tolerance}`
+    }&tolerance=${body.tolerance}&resolution=${body.resolution}`
   );
 }

@@ -1,6 +1,5 @@
 export const specialCandlesTime = [];
 
-// import { updateSpecialCandelsExternally } from "../../../../context/RangeContext";
 export const specialCandlesArr = [];
 
 export const customIndicatorStudy = (PineJS) => {
@@ -170,7 +169,6 @@ export const customIndicatorStudy = (PineJS) => {
             barColor = 2; // Blue color index
             wickColor = 2; // Blue color index
             borderColor = 2; // Blue color index
-            // updateSpecialCandelsExternally(t);
           } else {
             // Default behavior based on price change
             barColor =

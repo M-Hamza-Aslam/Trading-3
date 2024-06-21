@@ -13,109 +13,78 @@ type range = {
 };
 
 interface RangeContextState {
-  ranges: range[];
+  range: range | null;
   addRange: (range: range) => void;
-  updateRangePoints: (rangePoints: point[], rangeId: string) => void;
-  updateRangeToleranceInput: (toleranceInput: number, rangeId: string) => void;
-  updateRangeId: (rangeId: string, newRangeId: string) => void;
-  removeRange: (rangeId: string) => void;
+  updateRangePoints: (rangePoints: point[]) => void;
+  updateRangeToleranceInput: (toleranceInput: number) => void;
+  updateRangeId: (newRangeId: string) => void;
+  removeRange: () => void;
   specialCandles: number[];
-  addSpecialCandle: (candle: number) => void;
   setSpecialCandles: (candles: number[]) => void;
 }
 
 export const RangeContext = createContext<RangeContextState>({
-  ranges: [],
+  range: null,
   addRange: () => {},
   updateRangePoints: () => {},
   updateRangeToleranceInput: () => {},
   updateRangeId: () => {},
   removeRange: () => {},
   specialCandles: [],
-  addSpecialCandle: () => {},
   setSpecialCandles: () => {},
 });
 
-let addSpecialCandle;
-
 export const RangeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [ranges, setRanges] = useState<range[]>([]);
+  const [range, setRange] = useState<range | null>(null);
   const [specialCandles, setSpecialCandles] = useState<number[]>([]);
 
-  addSpecialCandle = (candle: number) => {
-    if (specialCandles.includes(candle)) {
-      return;
-    }
-    setSpecialCandles((prevCandles) => {
-      const tempCandles = [...prevCandles];
-      tempCandles.push(candle);
-      return tempCandles;
-    });
-  };
-
   const addRange = (range: range) => {
-    setRanges((prevRanges) => {
-      const tempRanges = [...prevRanges];
-      tempRanges.push(range);
-      return tempRanges;
+    setRange(range);
+  };
+  const updateRangePoints = (rangePoints: point[]) => {
+    setRange((prevRange) => {
+      return {
+        ...prevRange,
+        rangePoints: rangePoints,
+      };
     });
   };
-  const updateRangePoints = (rangePoints: point[], rangeId: string) => {
-    setRanges((prevRanges) => {
-      const tempRanges = [...prevRanges];
-      const index = tempRanges.findIndex((range) => range.rangeId === rangeId);
-      tempRanges[index].rangePoints = rangePoints;
-      return tempRanges;
+  const updateRangeToleranceInput = (toleranceInput: number) => {
+    setRange((prevRange) => {
+      return {
+        ...prevRange,
+        toleranceInput: toleranceInput,
+      };
     });
   };
-  const updateRangeToleranceInput = (
-    toleranceInput: number,
-    rangeId: string
-  ) => {
-    setRanges((prevRanges) => {
-      const tempRanges = [...prevRanges];
-      const index = tempRanges.findIndex((range) => range.rangeId === rangeId);
-      tempRanges[index].toleranceInput = toleranceInput;
-      return tempRanges;
-    });
-  };
-  const updateRangeId = (rangeId: string, newRangeId: string) => {
-    setRanges((prevRanges) => {
-      const tempRanges = [...prevRanges];
-      const index = tempRanges.findIndex((range) => range.rangeId === rangeId);
-      tempRanges[index].rangeId = newRangeId;
-      return tempRanges;
+  const updateRangeId = (newRangeId: string) => {
+    setRange((prevRange) => {
+      return {
+        ...prevRange,
+        rangeId: newRangeId,
+      };
     });
   };
 
-  const removeRange = (rangeId: string) => {
-    setRanges((prevRanges) => {
-      const tempRanges = [...prevRanges];
-      const index = tempRanges.findIndex((range) => range.rangeId === rangeId);
-      tempRanges.splice(index, 1);
-      return tempRanges;
-    });
+  const removeRange = () => {
+    setRange(null);
+    setSpecialCandles([]);
   };
 
   return (
     <RangeContext.Provider
       value={{
-        ranges,
+        range,
         addRange,
         updateRangePoints,
         updateRangeToleranceInput,
         updateRangeId,
         removeRange,
         specialCandles,
-        addSpecialCandle,
         setSpecialCandles,
       }}
     >
       {children}
     </RangeContext.Provider>
   );
-};
-
-export const updateSpecialCandelsExternally = (candle: number) => {
-  addSpecialCandle(candle);
 };

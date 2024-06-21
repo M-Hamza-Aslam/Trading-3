@@ -13,8 +13,8 @@ const Main = () => {
   return (
     <section className="w-full p-4">
       {status === 0 && (
-        <div className="w-full">
-          <h3 className="text-gray-400 font-semibold text-sm sm:text-lg text-center">
+        <div className="w-full mt-[60px]">
+          <h3 className="text-gray-400  font-semibold text-sm sm:text-lg text-center">
             Please Select a Category
           </h3>
         </div>

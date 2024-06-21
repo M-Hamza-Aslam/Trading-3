@@ -1,7 +1,7 @@
 import { getHistoricalBars, getTimestamp } from "./helpers.js";
 
 const configurationData = {
-  supported_resolutions: ["1D"],
+  supported_resolutions: ["1", "5", "15", "30", "1H", "4H", "1D", "1W", "1M"],
   exchanges: [],
   symbols_types: [
     { name: "crypto", value: "crypto" },
@@ -14,7 +14,7 @@ const configurationData = {
 
 // Use it to keep a record of the most recent bar on the chart
 const lastBarsCache = new Map();
-let currentResolution = "";
+export let currentResolution = "";
 
 const dataFeedObject = {
   onReady: (callback) => {
@@ -91,7 +91,7 @@ const dataFeedObject = {
     }
 
     try {
-      const rawData = await getHistoricalBars(symbolInfo.full_name);
+      const rawData = await getHistoricalBars(symbolInfo.full_name, resolution);
 
       // creating OHLC Objects
       const bars = Object.keys(rawData.time).map((index) => {
