@@ -152,7 +152,6 @@ export const customIndicatorStudy = (PineJS) => {
           const l = PineJS.Std.low(this._context);
           const c = PineJS.Std.close(this._context);
           const t = PineJS.Std.time(this._context);
-          console.log("t: ", t, specialCandlesArr);
           // Example condition: Change candle color to blue if close price is greater than 100
           // const myCondition = c == h || c == l || c == o;
 
@@ -165,6 +164,7 @@ export const customIndicatorStudy = (PineJS) => {
               candle.low === l &&
               candle.close === c
           );
+          console.log("t: ", t, myCondition2);
           if (myCondition2) {
             barColor = 2; // Blue color index
             wickColor = 2; // Blue color index

@@ -43,26 +43,56 @@ export const RangeProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const updateRangePoints = (rangePoints: point[]) => {
     setRange((prevRange) => {
-      return {
-        ...prevRange,
-        rangePoints: rangePoints,
-      };
+      if (prevRange) {
+        return {
+          ...prevRange,
+          rangePoints: rangePoints,
+        };
+      } else {
+        // Handle the case where prevRange is null
+        return {
+          symbol: "",
+          rangeId: null,
+          rangePoints: rangePoints,
+          toleranceInput: null,
+        };
+      }
     });
   };
   const updateRangeToleranceInput = (toleranceInput: number) => {
     setRange((prevRange) => {
-      return {
-        ...prevRange,
-        toleranceInput: toleranceInput,
-      };
+      if (prevRange) {
+        return {
+          ...prevRange,
+          toleranceInput: toleranceInput,
+        };
+      } else {
+        // Handle the case where prevRange is null
+        return {
+          symbol: "",
+          rangeId: null,
+          rangePoints: [],
+          toleranceInput: toleranceInput,
+        };
+      }
     });
   };
   const updateRangeId = (newRangeId: string) => {
     setRange((prevRange) => {
-      return {
-        ...prevRange,
-        rangeId: newRangeId,
-      };
+      if (prevRange) {
+        return {
+          ...prevRange,
+          rangeId: newRangeId,
+        };
+      } else {
+        // Handle the case where prevRange is null
+        return {
+          symbol: "",
+          rangeId: newRangeId,
+          rangePoints: [],
+          toleranceInput: null,
+        };
+      }
     });
   };
 

@@ -78,6 +78,7 @@ const RangeModal: FC<Props> = ({ closeModalHandler }) => {
 
         // const specialCandles: Candles[] = [];
         const specialCandlesTimestamp: number[] = [];
+        specialCandlesArr.splice(0, specialCandlesArr.length);
         Object.keys(data.time).forEach((index) => {
           // console.log("map: ", rawData.is_special);
           const bar = {
@@ -95,6 +96,7 @@ const RangeModal: FC<Props> = ({ closeModalHandler }) => {
             specialCandlesTimestamp.push(bar.time);
           }
         });
+        console.log("specialCandlesArr: ", specialCandlesArr);
         specialCandlesTimestamp.sort((a, b) => b - a);
         setSpecialCandles(specialCandlesTimestamp);
         toast.success("Range proceed successfully");
