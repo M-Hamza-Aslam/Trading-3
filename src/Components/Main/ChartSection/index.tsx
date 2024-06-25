@@ -4,6 +4,7 @@ import RangeModal from "../RangeModal/index.js";
 
 import { SymbolsContext } from "../../../context/SymbolsContext";
 import { RangeContext } from "../../../context/RangeContext";
+import { removeCustomIndicatorStudy } from "./Chart/ChartModule.js";
 import SpecialCandelsList from "./SpecialCandelsList.js";
 import { Tooltip } from "flowbite-react";
 
@@ -19,6 +20,7 @@ const ChartSection = () => {
   const performAnalysisHandler = () => {
     setIsShowRangeModal(true);
     setSpecialCandles([]);
+    removeCustomIndicatorStudy();
   };
   return (
     <>

@@ -10,6 +10,23 @@ export let chartDetails = {
 let newRangeEvent = false;
 export let LocalRangeId = null;
 export let AdvancedColoringCandlesStudyId = null;
+export const createCustomIndicatorStudy = async () => {
+  const study = await chartDetails.Widget.activeChart().createStudy(
+    "Advanced Coloring Candles",
+    false,
+    false
+  );
+  chartDetails.Widget.chart().getStudyById(study).bringToFront();
+  AdvancedColoringCandlesStudyId = study;
+};
+export const removeCustomIndicatorStudy = async () => {
+  if (AdvancedColoringCandlesStudyId) {
+    await chartDetails.Widget.chart().removeEntity(
+      AdvancedColoringCandlesStudyId
+    );
+    AdvancedColoringCandlesStudyId = null;
+  }
+};
 
 export function initializeChart(
   chartContainerRef,
@@ -63,12 +80,6 @@ export function initializeChart(
     chartDetails.Widget.activeChart().dataReady(() => {
       console.log("Chart Data is loaded");
     });
-    // const study = await chartDetails.Widget.activeChart().createStudy(
-    //   "Advanced Coloring Candles",
-    //   false,
-    //   true
-    // );
-    // chartDetails.Widget.chart().getStudyById(study).bringToFront();
     if (range) {
       const newRangeId = chartDetails.Widget.chart().createMultipointShape(
         range.rangePoints,
@@ -78,12 +89,7 @@ export function initializeChart(
       );
       updateRangeId(range.rangeId, newRangeId);
       LocalRangeId = newRangeId;
-      const study = await chartDetails.Widget.activeChart().createStudy(
-        "Advanced Coloring Candles",
-        false,
-        true
-      );
-      chartDetails.Widget.chart().getStudyById(study).bringToFront();
+      createCustomIndicatorStudy();
     }
     chartDetails.Widget.subscribe("drawing", (event) => {
       console.log("drawing: ", event);
@@ -103,7 +109,7 @@ export function initializeChart(
           .getPoints();
         //add new range and remove the previous one
         if (LocalRangeId) {
-          chartDetails.Widget.activeChart().removeEntity(LocalRangeId);
+          removeCustomIndicatorStudy();
           removeRange(LocalRangeId);
         }
         const range = {

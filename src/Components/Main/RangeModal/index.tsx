@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { getOccurences } from "../../../helpers/requests";
-import { chartDetails } from "../ChartSection/Chart/ChartModule.js";
+import { createCustomIndicatorStudy } from "../ChartSection/Chart/ChartModule.js";
 import { getTimestamp } from "../../Main/ChartSection/Chart/helpers.js";
 import { specialCandlesArr } from "../ChartSection/Chart/CustomIndicatorStudy.js";
 import { currentResolution } from "../../Main/ChartSection/Chart/datafeed.js";
@@ -100,12 +100,7 @@ const RangeModal: FC<Props> = ({ closeModalHandler }) => {
         specialCandlesTimestamp.sort((a, b) => b - a);
         setSpecialCandles(specialCandlesTimestamp);
         toast.success("Range proceed successfully");
-        const study = await chartDetails.Widget.activeChart().createStudy(
-          "Advanced Coloring Candles",
-          false,
-          true
-        );
-        chartDetails.Widget.chart().getStudyById(study).bringToFront();
+        createCustomIndicatorStudy();
         closeModalHandler();
         resetForm();
       } catch (err) {
